@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Mera Page</title>
+</head>
+<body>
+<h1>Hello</h1>
+<p>Ye mera pehla HTML page hai</p>
+</body>
+</html>
+<!DOCTYPE html>
+<html>
+<head>
+<title>Rotating Earth</title>
+
+<style>
+body {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  background: black;
+  margin: 0;
+}
+
+/* Container */
+.container {
+  position: relative;
+  text-align: center;
+}
+
+/* Text above Earth */
+.name {
+  position: absolute;
+  top: -80px;   /* ye approx 10 cm jaisa gap create karega */
+  left: 50%;
+  transform: translateX(-50%);
+  color: white;
+  font-size: 20px;
+  font-family: Arial;
+}
+
+/* Earth */
+.earth {
+  width: 200px;
+  height: 200px;
+  background-image: url("https://upload.wikimedia.org/wikipedia/commons/6/6f/Earth_Eastern_Hemisphere.jpg");
+  background-size: cover;
+  border-radius: 50%;
+  animation: rotate 5s linear infinite;
+}
+
+/* rotation */
+@keyframes rotate {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+</style>
+
+</head>
+
+<body>
+
+<div class="container">
+
+  <div class="name">this Earth made by kaluwa</div>
+
+  <div class="earth"></div>
+
+</div>
+
+</body>
+</html>
