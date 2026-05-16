@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+[8:23 PM, 5/16/2026] Dilfash: <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
@@ -30,41 +30,120 @@ const scene = new THREE.Scene();
 const camera = new THREE.PerspectiveCamera(75, window.innerWidth/window.innerHeight, 0.1, 1000);
 camera.position.z = 250;
 
+const renderer …
+[8:37 PM, 5/16/2026] Dilfash: <!DOCTYPE html><html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Interactive Earth - Made By Kaluwa</title>
+  <style>
+    body { margin: 0; overflow: hidden; background: black; }/* TOP TEXT ABOVE EARTH */
+#title {
+  position: absolute;
+  top: 30px;
+  width: 100%;
+  text-align: center;
+  color: #00ffff;
+  font-size: 28px;
+  font-weight: bold;
+  font-family: Arial, sans-serif;
+  z-index: 20;
+  text-shadow: 0 0 10px #00ffff;
+}
+
+#tooltip {
+  position: absolute;
+  display: none;
+  background: rgba(0,0,0,0.75);
+  color: white;
+  padding: 8px 10px;
+  border-radius: 6px;
+  font-size: 14px;
+  pointer-events: none;
+  white-space: nowrap;
+  z-index: 10;
+}
+
+  </style>
+</head>
+<body><!-- TITLE ABOVE EARTH --><div id="title">This Earth Made By Kaluwa</div>
+<div id="tooltip"></div><!-- Libraries --><script src="https://unpkg.com/three@0.160.0/build/three.min.js"></script><script src="https://unpkg.com/three-globe@2.31.0/dist/three-globe.min.js"></script><script>
+
+// --------------------
+// COUNTRY AREA DATA
+// --------------------
+const countryArea = {
+  "India": 3287263,
+  "United States of America": 9833520,
+  "China": 9596961,
+  "Russia": 17098242,
+  "France": 551695,
+  "Brazil": 8515767,
+  "Australia": 7692024,
+  "Canada": 9984670,
+  "United Kingdom": 242495
+};
+
+// --------------------
+// TOOLTIP
+// --------------------
+const tooltip = document.getElementById("tooltip");
+
+window.addEventListener("mousemove", (e) => {
+  tooltip.style.left = e.pageX + 12 + "px";
+  tooltip.style.top = e.pageY + 12 + "px";
+});
+
+// --------------------
+// SCENE
+// --------------------
+const scene = new THREE.Scene();
+
+const camera = new THREE.PerspectiveCamera(
+  75,
+  window.innerWidth / window.innerHeight,
+  0.1,
+  1000
+);
+camera.position.z = 250;
+
 const renderer = new THREE.WebGLRenderer({ antialias: true });
 renderer.setSize(window.innerWidth, window.innerHeight);
 document.body.appendChild(renderer.domElement);
 
-// Light
+// LIGHT
 scene.add(new THREE.AmbientLight(0xffffff, 1));
 
-// Globe
+// --------------------
+// GLOBE
+// --------------------
 const Globe = new ThreeGlobe()
-  .globeImageUrl('https://unpkg.com/three-globe/example/img/earth-blue-marble.jpg');
+  .globeImageUrl('https://unpkg.com/three-globe/example/img/earth-blue-marble.jpg')
+  .bumpImageUrl('https://unpkg.com/three-globe/example/img/earth-topology.png');
 
 scene.add(Globe);
 
-// Tooltip
-const tooltip = document.getElementById("tooltip");
-
-window.addEventListener("mousemove", (e) => {
-  tooltip.style.left = e.pageX + 10 + "px";
-  tooltip.style.top = e.pageY + 10 + "px";
-});
-
-// Countries load
+// --------------------
+// COUNTRIES LOAD
+// --------------------
 fetch('https://raw.githubusercontent.com/johan/world.geo.json/master/countries.geo.json')
   .then(res => res.json())
   .then(data => {
 
     Globe.polygonsData(data.features)
-      .polygonCapColor(() => 'rgba(0,150,255,0.3)')
-      .polygonSideColor(() => 'rgba(0,100,255,0.05)')
+      .polygonCapColor(() => 'rgba(0,180,255,0.25)')
       .polygonStrokeColor(() => '#00ffff')
 
       .onPolygonHover(d => {
         if (d) {
+          const name = d.properties.name;
+          const area = countryArea[name];
+
           tooltip.style.display = "block";
-          tooltip.innerHTML = d.properties.name;
+
+          tooltip.innerHTML = area
+            ? <b>${name}</b><br>${area.toLocaleString()} km²
+            : <b>${name}</b><br>Area data not available;
+
         } else {
           tooltip.style.display = "none";
         }
@@ -72,7 +151,9 @@ fetch('https://raw.githubusercontent.com/johan/world.geo.json/master/countries.g
 
   });
 
-// Animate
+// --------------------
+// ANIMATION
+// --------------------
 function animate() {
   requestAnimationFrame(animate);
   Globe.rotation.y += 0.0015;
@@ -80,13 +161,14 @@ function animate() {
 }
 animate();
 
-// Resize
-window.addEventListener("resize", () => {
-  camera.aspect = window.innerWidth/window.innerHeight;
+// --------------------
+// RESIZE
+// --------------------
+window.addEventListener('resize', () => {
+  camera.aspect = window.innerWidth / window.innerHeight;
   camera.updateProjectionMatrix();
   renderer.setSize(window.innerWidth, window.innerHeight);
 });
-</script>
 
-</body>
+</script></body>
 </html>
