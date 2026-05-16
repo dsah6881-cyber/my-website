@@ -1,100 +1,31 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-<meta charset="UTF-8">
-<title>Earth Countries</title>
-
-<script src="https://unpkg.com/globe.gl"></script>
-
-<style>
-html, body {
-  margin: 0;
-  padding: 0;
-  width: 100%;
-  height: 100%;
-  overflow: hidden;
-}
-
-/* Earth container full screen */
-#globeViz {
-  width: 100vw;
-  height: 100vh;
-}
-
-/* 👉 NEW: Title styling */
-#title {
-  position: absolute;
-  top: 20px;
-  width: 100%;
-  text-align: center;
-  color: white;
-  font-size: 28px;
-  font-weight: bold;
-  z-index: 10;
-  text-shadow: 0px 0px 10px black;
-}
-</style>
-</head>
-
-<body>
-
-<!-- 👉 NEW: Text added -->
-<h1 id="title">This Earth made by kaluwa</h1>
-
-<div id="globeViz"></div>
-
-<script>
-const world = Globe()(document.getElementById('globeViz'))
-  .globeImageUrl('//unpkg.com/thre…
-[8:16 PM, 5/16/2026] Dilfash: <!DOCTYPE html><html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <title>Earth with Country Area Tooltip</title>
+  <meta charset="UTF-8">
+  <title>Earth Fix Version</title>
   <style>
-    body { margin: 0; overflow: hidden; background: #000; }
+    body { margin: 0; overflow: hidden; background: black; }
     #tooltip {
       position: absolute;
       display: none;
-      background: rgba(0,0,0,0.75);
-      color: #fff;
-      padding: 8px 10px;
+      background: rgba(0,0,0,0.7);
+      color: white;
+      padding: 6px 10px;
       border-radius: 6px;
       font-size: 14px;
       pointer-events: none;
-      z-index: 10;
-      white-space: nowrap;
     }
   </style>
 </head>
-<body><div id="tooltip"></div><!-- Three.js --><script src="https://unpkg.com/three/build/three.min.js"></script><script src="https://unpkg.com/three-globe"></script><script src="https://unpkg.com/topojson-client"></script><script>
+<body>
 
-// ---------------------------
-// COUNTRY AREA DATA (km²)
-// ---------------------------
-const countryArea = {
-  "India": 3287263,
-  "United States of America": 9833520,
-  "China": 9596961,
-  "Russia": 17098242,
-  "France": 551695,
-  "Brazil": 8515767,
-  "Australia": 7692024,
-  "Canada": 9984670
-};
+<div id="tooltip"></div>
 
-// ---------------------------
-// TOOLTIP
-// ---------------------------
-const tooltip = document.getElementById("tooltip");
+<script src="https://unpkg.com/three@0.160.0/build/three.min.js"></script>
+<script src="https://unpkg.com/three-globe"></script>
 
-window.addEventListener("mousemove", (e) => {
-  tooltip.style.left = e.pageX + 10 + "px";
-  tooltip.style.top = e.pageY + 10 + "px";
-});
-
-// ---------------------------
-// SCENE SETUP
-// ---------------------------
+<script>
+// Scene
 const scene = new THREE.Scene();
 const camera = new THREE.PerspectiveCamera(75, window.innerWidth/window.innerHeight, 0.1, 1000);
 camera.position.z = 250;
@@ -103,54 +34,45 @@ const renderer = new THREE.WebGLRenderer({ antialias: true });
 renderer.setSize(window.innerWidth, window.innerHeight);
 document.body.appendChild(renderer.domElement);
 
-// LIGHT
-const light = new THREE.AmbientLight(0xffffff, 1);
-scene.add(light);
+// Light
+scene.add(new THREE.AmbientLight(0xffffff, 1));
 
-// ---------------------------
-// GLOBE
-// ---------------------------
+// Globe
 const Globe = new ThreeGlobe()
-  .globeImageUrl('https://unpkg.com/three-globe/example/img/earth-blue-marble.jpg')
-  .bumpImageUrl('https://unpkg.com/three-globe/example/img/earth-topology.png');
+  .globeImageUrl('https://unpkg.com/three-globe/example/img/earth-blue-marble.jpg');
 
 scene.add(Globe);
 
-// ---------------------------
-// LOAD COUNTRIES
-// ---------------------------
+// Tooltip
+const tooltip = document.getElementById("tooltip");
+
+window.addEventListener("mousemove", (e) => {
+  tooltip.style.left = e.pageX + 10 + "px";
+  tooltip.style.top = e.pageY + 10 + "px";
+});
+
+// Countries load
 fetch('https://raw.githubusercontent.com/johan/world.geo.json/master/countries.geo.json')
   .then(res => res.json())
-  .then(countries => {
+  .then(data => {
 
-    Globe.polygonsData(countries.features)
-      .polygonCapColor(() => 'rgba(0,200,255,0.15)')
+    Globe.polygonsData(data.features)
+      .polygonCapColor(() => 'rgba(0,150,255,0.3)')
       .polygonSideColor(() => 'rgba(0,100,255,0.05)')
       .polygonStrokeColor(() => '#00ffff')
 
-      // HOVER EVENT
-      .onPolygonHover(country => {
-        if (country) {
-          const name = country.properties.name;
-          const area = countryArea[name];
-
-          tooltip.style.display = 'block';
-
-          if (area) {
-            tooltip.innerHTML = ${name}<br>${area.toLocaleString()} km²;
-          } else {
-            tooltip.innerHTML = ${name}<br>Area data not available;
-          }
+      .onPolygonHover(d => {
+        if (d) {
+          tooltip.style.display = "block";
+          tooltip.innerHTML = d.properties.name;
         } else {
-          tooltip.style.display = 'none';
+          tooltip.style.display = "none";
         }
       });
 
   });
 
-// ---------------------------
-// ANIMATION
-// ---------------------------
+// Animate
 function animate() {
   requestAnimationFrame(animate);
   Globe.rotation.y += 0.0015;
@@ -158,14 +80,13 @@ function animate() {
 }
 animate();
 
-// ---------------------------
-// RESIZE
-// ---------------------------
-window.addEventListener('resize', () => {
+// Resize
+window.addEventListener("resize", () => {
   camera.aspect = window.innerWidth/window.innerHeight;
   camera.updateProjectionMatrix();
   renderer.setSize(window.innerWidth, window.innerHeight);
 });
+</script>
 
-</script></body>
+</body>
 </html>
