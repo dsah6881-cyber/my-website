@@ -1,39 +1,22 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Interactive Earth</title>
-  <style>
-    body {
-      margin: 0;
-      overflow: hidden;
-      background: black;
-    }
-    #globeViz {
-      width: 100vw;
-      height: 100vh;
-    }
-  </style>
-  <script src="https://unpkg.com/globe.gl"></script>
+<meta charset="UTF-8">
+<title>Earth Globe</title>
+<script src="https://unpkg.com/globe.gl"></script>
+<style>
+body { margin: 0; }
+#globeViz { width: 100vw; height: 100vh; }
+</style>
 </head>
 <body>
-  <div id="globeViz"></div>
+<div id="globeViz"></div>
 
-  <script>
-    const world = Globe()
-      (document.getElementById('globeViz'))
-      .globeImageUrl('https://unpkg.com/three-globe/example/img/earth-night.jpg')
-      .backgroundImageUrl('https://unpkg.com/three-globe/example/img/night-sky.png');
+<script>
+const globe = Globe()(document.getElementById('globeViz'))
+  .globeImageUrl('//unpkg.com/three-globe/example/img/earth-blue-marble.jpg')
+  .backgroundImageUrl('//unpkg.com/three-globe/example/img/night-sky.png');
+</script>
 
-    fetch('https://raw.githubusercontent.com/holtzy/D3-graph-gallery/master/DATA/world.geojson')
-      .then(res => res.json())
-      .then(countries => {
-        world
-          .polygonsData(countries.features)
-          .polygonCapColor(() => 'rgba(0, 200, 255, 0.4)')
-          .polygonSideColor(() => 'rgba(0, 100, 0, 0.15)')
-          .polygonStrokeColor(() => '#ffffff')
-          .polygonLabel(d => <b>${d.properties.name}</b>);
-      });
-  </script>
 </body>
 </html>
