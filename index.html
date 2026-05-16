@@ -2,7 +2,7 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>Earth Globe</title>
+<title>Earth Countries</title>
 <script src="https://unpkg.com/globe.gl"></script>
 <style>
 body { margin: 0; }
@@ -13,9 +13,20 @@ body { margin: 0; }
 <div id="globeViz"></div>
 
 <script>
-const globe = Globe()(document.getElementById('globeViz'))
+const world = Globe()(document.getElementById('globeViz'))
   .globeImageUrl('//unpkg.com/three-globe/example/img/earth-blue-marble.jpg')
   .backgroundImageUrl('//unpkg.com/three-globe/example/img/night-sky.png');
+
+fetch('https://raw.githubusercontent.com/holtzy/D3-graph-gallery/master/DATA/world.geojson')
+  .then(res => res.json())
+  .then(data => {
+    world
+      .polygonsData(data.features)
+      .polygonCapColor(() => 'rgba(0,255,0,0.25)')
+      .polygonSideColor(() => 'rgba(0,100,0,0.15)')
+      .polygonStrokeColor(() => '#fff')
+      .polygonLabel(d => d.properties.name);
+  });
 </script>
 
 </body>
